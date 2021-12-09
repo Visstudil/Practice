@@ -20,7 +20,7 @@ class Parser():
     PAGE_REQUEST = "/ajax?page="
 
     SUBJECTS = {}
-    LESSONS = {}  # ToDo Номер урока - его адрес
+    LESSONS = {}
 
     def __init__(self):
         # Parse the school subjects page
@@ -32,16 +32,25 @@ class Parser():
             Parser.SUBJECTS[subjectCell.
             select_one("span").string] = subjectCell.get("href")
 
-    def parse_lessons_id_list(self, subjectID, classNumber):
+    def parse_lessons_links(self, _subject, _class):
             page = 1
+            lessonNumber = 1
             while page is not False:
                 request = requests.post(Parser.MAIN_URL 
-                                        + subjectID
-                                        + classNumber
+                                        + str(_subject)
+                                        + str(_class)
                                         + Parser.PAGE_REQUEST
                                         + str(page))
+
+                returnedHtml = request.json()["html"]
+
+                soup = bs(returnedHtml, "html.parser")
+                for a in soup.find_all("a", "lesson-block"):
+                    self.LESSONS[lessonNumber] = self.MAIN_URL + a["href"]
+                    lessonNumber += 1
+
                 page = request.json()["nextPage"]
-                print(request.json()["html"])
+
 
     def parse_answers(self):
         pass
@@ -55,6 +64,9 @@ initialize.start()
 print(Parser.SUBJECTS)
 
 parser = Parser()
-subject_ = str(input("subject >>>"))
-class_ = str(input("class >>>"))
-parser.parse_lessons_id_list(Parser.SUBJECTS[subject_], class_)
+selectedSubject = str(input("subject >>>"))
+selectedClass = int(input("class >>>"))
+selectedLesson = int(input("lesson >>>"))
+
+parser.parse_lessons_links(Parser.SUBJECTS[selectedSubject], selectedClass)
+print(Parser.LESSONS[int(selectedLesson)])
