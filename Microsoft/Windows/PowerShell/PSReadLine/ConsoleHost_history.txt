@@ -1,0 +1,19 @@
+cd Practice
+clear
+ls
+dir
+cd .\garbadge/
+cd 
+undo
+clear
+top
+CLear
+help
+help cd
+sl
+sl dwn
+cd..
+cd .\Practice\
+cd .\garbadge\
+cd..
+exit

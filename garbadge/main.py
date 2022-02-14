@@ -20,6 +20,7 @@ soup = bs(req.text, "html.parser")
 def setup():
     for link in soup.find_all("a"):  # Fill up SUBJECTS
         if "/subject/" in link.get("href"):
+            print(req.request.headers)
             q = requests.get(mainURL + link.get("href"))
             subjectName = bs(q.text, "html.parser").find_all("h1", {"class": "content-title"})[0].getText()
             subjectID = link.get("href").strip("/subject")
